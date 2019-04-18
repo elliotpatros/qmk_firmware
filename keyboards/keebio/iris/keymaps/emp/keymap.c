@@ -1,0 +1,331 @@
+#include QMK_KEYBOARD_H
+
+// todo: turn process_record_user into a better function with structs.
+// basically, make it faster
+
+extern keymap_config_t keymap_config;
+
+// Layer definitions
+#define _COLEMAK 0
+#define _MODIFIERS 1
+#define _SYMBOL 2
+#define _FUNCTION 3
+
+// Custom keycode definitions
+enum custom_keycodes {
+    CTL_ESC = SAFE_RANGE,   // mod tap: left control / esc
+    LST_LPR,                // mod tap: left shift / left paren
+    RST_RPR,                // mod tap: right shift / right paren
+    SFT_ENT,                // mod tap: right shift / enter
+    GUI_COM,                // mod tap: right gui / comma
+    ALT_DOT,                // mod tap: right alt / period
+    CTL_SLS,                // mod tap: right control / slash
+    CAG_ENT,                // mods tap: RCAG / enter
+    SPC_SYM,                // layer tap: symbols / space
+    L_LAYER,                // layer: left function layer
+    R_LAYER,                // layer: right function layer
+};
+
+// Shorthand keycode definitions
+#define VUP_MAC KC__VOLUP
+#define MUT_MAC KC__MUTE
+#define VDN_MAC KC__VOLDOWN
+
+// The layout
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+
+    // default layer
+    [_COLEMAK] = LAYOUT(
+// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
+    KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,                       KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, KC_BSLS,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    CTL_ESC, KC_A,    KC_R,    KC_S,    KC_T,    KC_D,                       KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT,
+// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+    LST_LPR, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    SPC_SYM,  CAG_ENT, KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, RST_RPR,
+// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
+                                        KC_LGUI, L_LAYER, SFT_ENT,  KC_SPC,  R_LAYER, KC_LALT
+//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
+    ),
+
+    // momentary on when any non-default layer (any except _COLEMAK) is on
+    [_MODIFIERS] = LAYOUT(
+// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, KC_LCTL, KC_LALT, KC_LGUI, KC_BSPC, _______, _______,  _______, _______, KC_DEL,  GUI_COM, ALT_DOT, CTL_SLS, _______,
+// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
+                                        _______, _______, _______,  _______, _______, _______
+//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
+    ),
+
+    // momentary on when both L_LAYER and R_LAYER are pressed, or when SPC_SYM is pressed
+    [_SYMBOL] = LAYOUT(
+// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
+    KC_F12,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                      KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11, 
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_F12,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                    KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, _______, _______, _______, KC_ENT,  _______,  _______, KC_SPC,  _______, _______, _______, _______, _______,
+// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
+                                        _______, _______, _______,  _______, _______, _______
+//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
+    ),
+
+    // momentary on when either L_LAYER or R_LAYER is pressed
+    [_ALTERNATE] = LAYOUT(
+// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_INS,                     VUP_MAC, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_BRMU,                    MUT_MAC, KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, _______, _______, _______, KC_BRMD, _______,  _______, VDN_MAC, _______, _______, _______, _______, _______,
+// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
+                                        _______, _______, _______,  _______, _______, _______
+//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
+    )
+
+};
+
+//------------------------------------------------------------------------------
+// mod tap keys state
+//------------------------------------------------------------------------------
+#define CTL_ESC_ID 0
+#define LST_LPR_ID 1
+#define RST_RPR_ID 2
+#define SFT_ENT_ID 3
+#define GUI_COM_ID 4
+#define ALT_DOT_ID 5
+#define CTL_SLS_ID 6
+#define CAG_ENT_ID 7
+#define SPC_SYM_ID 8
+#define L_LAYER_ID 9
+#define R_LAYER_ID 10
+#define NUM_TAP_ID 11
+static bool mt_used = false;
+static uint16_t mt_timer[NUM_TAP_ID] = {0};
+
+//------------------------------------------------------------------------------
+// layer state
+//------------------------------------------------------------------------------
+#define LLAYER_ID 0b00000001
+#define RLAYER_ID 0b00000010
+#define SLAYER_ID 0b00000100
+#define LAYERS_NONE 0
+#define LAYERS_L
+#define LAYERS_R
+#define LAYERS_S
+#define LAYERS_
+static uint8_t layer_state = 0;
+
+void handle_layer_state(void) {
+    switch (layer_state) {
+    case 0:                         // nothing pressed
+        layer_off(_SYMBOL);
+        layer_off(_ALTERNATE);
+        layer_off(_MODIFIERS);
+        break;
+    case 1:                         // left layer pressed
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    case 5:
+        break;
+    case 6:
+        break;
+    case 7:
+        break;
+    case 8:
+        break;
+    }
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t* record) {
+
+
+    // was this function called to handle a pressed key?
+    const bool pressed = record->event.pressed;
+
+    // any keydown spends a pending mod/tap key
+    if (pressed) {
+        mt_used = true;
+    }
+
+    // keycodes >= SAFE_RANGE are not handled
+    if (keycode < SAFE_RANGE) {
+        return true;    // this keypress was not handled
+    }
+
+    switch (keycode) {
+    case SFT_ENT:       // mod tap: right shift
+        if (pressed) {
+            register_code(KC_RSFT);
+            mt_timer[SFT_ENT_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_RSFT);
+            if (!mt_used && timer_elapsed(mt_timer[SFT_ENT_ID]) < TAPPING_TERM) {
+                tap_code(KC_ENT);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+    case CTL_ESC:       // mod tap: left control
+        if (pressed) {
+            register_code(KC_LCTL);
+            mt_timer[CTL_ESC_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_LCTL);
+            if (!mt_used && timer_elapsed(mt_timer[CTL_ESC_ID]) < TAPPING_TERM) {
+                tap_code(KC_ESC);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+    case LST_LPR: 
+        if (pressed) {
+            register_code(KC_LSFT);
+            mt_timer[LST_LPR_ID] = timer_read();
+            mt_used = false;
+        } else {
+            if (!mt_used && timer_elapsed(mt_timer[LST_LPR_ID]) < TAPPING_TERM) {
+                tap_code(KC_9);
+            } else {
+                mt_used = false;
+            }
+            unregister_code(KC_LSFT);
+        }
+        return false;   // this keypress was handled
+    case RST_RPR: 
+        if (pressed) {
+            register_code(KC_RSFT);
+            mt_timer[RST_RPR_ID] = timer_read();
+            mt_used = false;
+        } else {
+            if (!mt_used && timer_elapsed(mt_timer[RST_RPR_ID]) < TAPPING_TERM) {
+                tap_code(KC_0);
+            } else {
+                mt_used = false;
+            }
+            unregister_code(KC_RSFT);
+        }
+        return false;   // this keypress was handled
+    case CAG_ENT:
+        if (pressed) {
+            register_code(KC_RGUI);
+            register_code(KC_RALT);
+            register_code(KC_RCTL);
+            mt_timer[CAG_ENT_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_RGUI);
+            unregister_code(KC_RALT);
+            unregister_code(KC_RCTL);
+            if (!mt_used && timer_elapsed(mt_timer[CAG_ENT_ID]) < TAPPING_TERM) {
+                tap_code(KC_ENT);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+    case SPC_SYM:
+        slayer_pressed = pressed;
+        if (pressed) {
+            layer_on(_SYMBOL);
+            mt_timer[SPC_SYM_ID] = timer_read();
+            mt_used = false;
+        } else {
+            if (! (llayer_pressed || rlayer_pressed)) {
+                layer_off(_SYMBOL);
+            }
+            if (!mt_used && timer_elapsed(mt_timer[SPC_SYM_ID]) < TAPPING_TERM) {
+                tap_code(KC_SPC);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+    case L_LAYER:
+        llayer_pressed = pressed;
+        if (pressed) {
+            if (rlayer_pressed) {
+                layer_off(_FUNCTION);
+                layer_on(_SYMBOL);
+            } else {
+                layer_on(_FUNCTION);
+            }
+        } else {
+            if (rlayer_pressed) {
+                layer_off(_SYMBOL);
+                layer_on(_FUNCTION);
+            } else {
+
+            }
+        }
+        return false;   // this keypress was handled
+    case GUI_COM:
+        if (pressed) {
+            register_code(KC_RGUI);
+            mt_timer[GUI_COM_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_RGUI);
+            if (!mt_used && timer_elapsed(mt_timer[GUI_COM_ID]) < TAPPING_TERM) {
+                tap_code(KC_COMM);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+    case ALT_DOT:
+        if (pressed) {
+            register_code(KC_RALT);
+            mt_timer[ALT_DOT_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_RALT);
+            if (!mt_used && timer_elapsed(mt_timer[ALT_DOT_ID]) < TAPPING_TERM) {
+                tap_code(KC_DOT);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+    case CTL_SLS_ID:
+        if (pressed) {
+            register_code(KC_RCTL);
+            mt_timer[CTL_SLS_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_RCTL);
+            if (!mt_used && timer_elapsed(mt_timer[CTL_SLS_ID]) < TAPPING_TERM) {
+                tap_code(KC_SLSH);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+#define L_LAYER_ID 9
+#define R_LAYER_ID 10
+#define NUM_TAP_ID 11
+    }
+
+    return true;        // this keypress was not handled
+}
+
