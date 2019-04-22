@@ -8,8 +8,8 @@ extern keymap_config_t keymap_config;
 // Layer definitions
 #define _COLEMAK 0
 #define _MODIFIERS 1
-#define _SYMBOL 2
-#define _FUNCTION 3
+#define _ALTERNATE 2
+#define _SYMBOL 3
 
 // Custom keycode definitions
 enum custom_keycodes {
