@@ -93,6 +93,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     static bool llayer_pressed = false;
     static bool rlayer_pressed = false;
     static bool slayer_pressed = false;
+    static bool shift1_pressed = false;
+    static bool shift2_pressed = false;
     static bool mt_used = false;
     static uint16_t mt_timer[NUM_TAP_ID] = {0};
 
@@ -112,12 +114,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
     switch (keycode) {
     case SFT_ENT:       // mod tap: right shift
+        shift1_pressed = pressed;
         if (pressed) {
             register_code(KC_RSFT);
             mt_timer[SFT_ENT_ID] = timer_read();
             mt_used = false;
         } else {
-            unregister_code(KC_RSFT);
+            if (! shift2_pressed) {
+                unregister_code(KC_RSFT);
+            }
             if (!mt_used && timer_elapsed(mt_timer[SFT_ENT_ID]) < TAPPING_TERM) {
                 tap_code(KC_ENT);
             } else {
@@ -204,12 +209,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         }
         return false;   // this keypress was handled
     case RST_RPR: 
+        shift2_pressed = pressed;
         if (pressed) {
             register_code(KC_RSFT);
             mt_timer[RST_RPR_ID] = timer_read();
             mt_used = false;
         } else {
-            unregister_code(KC_RSFT);
+            if (! shift1_pressed) {
+                unregister_code(KC_RSFT);
+            }
             if (!mt_used && timer_elapsed(mt_timer[RST_RPR_ID]) < TAPPING_TERM) {
                 tap_code(KC_RBRC);
             } else {
