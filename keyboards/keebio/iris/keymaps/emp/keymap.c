@@ -7,8 +7,9 @@ extern keymap_config_t keymap_config;
 
 // Layer definitions
 #define _COLEMAK 0
-#define _ALTERNATE 1
-#define _SYMBOL 2
+#define _MODIFIERS 1
+#define _ALTERNATE 2
+#define _SYMBOL 3
 
 // Custom keycode definitions
 enum custom_keycodes {
@@ -16,6 +17,9 @@ enum custom_keycodes {
     LST_LPR,                // mod tap: left shift / left paren
     RST_RPR,                // mod tap: right shift / right paren
     SFT_ENT,                // mod tap: right shift / enter
+    GUI_COM,                // mod tap: right gui / comma
+    ALT_DOT,                // mod tap: right alt / dot
+    CTL_SLS,                // mod tap: right ctl / slash
     RCAG,                   // mods: RCAG
     L_LAYER,                // layer tap: left function layer / space
     R_LAYER,                // layer tap: right function layer / enter
@@ -45,6 +49,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
     ),
 
+    // momentary on when any non-default layer (any except _COLEMAK) is on
+    [_MODIFIERS] = LAYOUT(
+// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, KC_LCTL, KC_LALT, KC_LGUI, KC_BSPC, _______, _______,  _______, _______, KC_DEL,  GUI_COM, ALT_DOT, CTL_SLS, _______,
+// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
+                                        _______, _______, _______,  _______, _______, _______
+//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
+    ),
+
     // momentary on when either L_LAYER or R_LAYER is pressed
     [_ALTERNATE] = LAYOUT(
 // ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
@@ -54,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
     _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_BRMU,                    MUT_MAC, KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, _______,
 // ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, KC_LCTL, KC_LALT, KC_LGUI, KC_BSPC, KC_BRMD, _______,  _______, VDN_MAC, KC_DEL,  KC_RGUI, KC_RALT, KC_RCTL, _______,
+    _______, _______, _______, _______, _______, KC_BRMD, _______,  _______, VDN_MAC, _______, _______, _______, _______, _______,
 // └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
                                         _______, _______, _______,  _______, _______, _______
 //                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
@@ -65,11 +84,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
     KC_F12,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                      KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11, 
 // ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, _______, _______, _______, _______, _______,                    XXXXXXX, KC_P7,   KC_P8,   KC_P9,   XXXXXXX, KC_F12,
+    _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_F12,
 // ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, _______, _______, _______, _______, XXXXXXX,                    KC_PDOT, KC_P4,   KC_P5,   KC_P6,   KC_PCMM, _______,
+    _______, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                    KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, _______,
 // ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, _______, _______, _______, _______, XXXXXXX, _______,  _______, KC_P0,   KC_P1,   KC_P2,   KC_P3,   XXXXXXX, _______,
+    _______, _______, _______, _______, _______, KC_ENT,  _______,  _______, KC_SPC,  _______, _______, _______, _______, _______,
 // └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
                                         _______, _______, _______,  _______, _______, _______
 //                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
@@ -86,7 +105,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #define SFT_ENT_ID 3
 #define L_LAYER_ID 4
 #define R_LAYER_ID 5
-#define NUM_TAP_ID 6
+#define GUI_COM_ID 6
+#define ALT_DOT_ID 7
+#define CTL_SLS_ID 8
+#define NUM_TAP_ID 9
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
@@ -133,6 +155,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     case L_LAYER:
         llayer_pressed = pressed;
         if (pressed) {
+            layer_on(_MODIFIERS);
             layer_on(_ALTERNATE);
             if (rlayer_pressed) {
                 layer_on(_SYMBOL);
@@ -149,6 +172,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 layer_off(_SYMBOL);
                 if (! rlayer_pressed) {
                     layer_off(_ALTERNATE);
+                    layer_off(_MODIFIERS);
                 }
             } else if (! rlayer_pressed) {
                 layer_off(_ALTERNATE);
@@ -158,6 +182,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     case R_LAYER:
         rlayer_pressed = pressed;
         if (pressed) {
+            layer_on(_MODIFIERS);
             layer_on(_ALTERNATE);
             if (llayer_pressed) {
                 layer_on(_SYMBOL);
@@ -174,6 +199,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 layer_off(_SYMBOL);
                 if (! llayer_pressed) {
                     layer_off(_ALTERNATE);
+                    layer_off(_MODIFIERS);
                 }
             } else if (! llayer_pressed) {
                 layer_off(_ALTERNATE);
@@ -186,12 +212,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             mt_timer[LST_LPR_ID] = timer_read();
             mt_used = false;
         } else {
-            unregister_code(KC_LSFT);
             if (!mt_used && timer_elapsed(mt_timer[LST_LPR_ID]) < TAPPING_TERM) {
-                tap_code(KC_LBRC);
+                tap_code(KC_9);
             } else {
                 mt_used = false;
             }
+            unregister_code(KC_LSFT);
         }
         return false;   // this keypress was handled
     case CTL_ESC:       // mod tap: left control
@@ -215,25 +241,69 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             mt_timer[RST_RPR_ID] = timer_read();
             mt_used = false;
         } else {
-            if (! shift1_pressed) {
-                unregister_code(KC_RSFT);
-            }
             if (!mt_used && timer_elapsed(mt_timer[RST_RPR_ID]) < TAPPING_TERM) {
-                tap_code(KC_RBRC);
+                tap_code(KC_0);
             } else {
                 mt_used = false;
+            }
+            if (! shift1_pressed) {
+                unregister_code(KC_RSFT);
             }
         }
         return false;   // this keypress was handled
     case S_LAYER:
         slayer_pressed = pressed;
         if (pressed) {
+            layer_on(_MODIFIERS);
             layer_on(_SYMBOL);
         } else {
             if (! (llayer_pressed || rlayer_pressed)) {
                 layer_off(_SYMBOL);
+                layer_off(_MODIFIERS);
             } else if (! (llayer_pressed && rlayer_pressed)) {
                 layer_off(_SYMBOL);
+            }
+        }
+        return false;   // this keypress was handled
+    case GUI_COM:
+        if (pressed) {
+            register_code(KC_RGUI);
+            mt_timer[GUI_COM_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_RGUI);
+            if (!mt_used && timer_elapsed(mt_timer[GUI_COM_ID]) < TAPPING_TERM) {
+                tap_code(KC_COMM);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+    case ALT_DOT:
+        if (pressed) {
+            register_code(KC_RALT);
+            mt_timer[ALT_DOT_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_RSFT);
+            if (!mt_used && timer_elapsed(mt_timer[ALT_DOT_ID]) < TAPPING_TERM) {
+                tap_code(KC_DOT);
+            } else {
+                mt_used = false;
+            }
+        }
+        return false;   // this keypress was handled
+    case CTL_SLS:
+        if (pressed) {
+            register_code(KC_RCTL);
+            mt_timer[CTL_SLS_ID] = timer_read();
+            mt_used = false;
+        } else {
+            unregister_code(KC_RSFT);
+            if (!mt_used && timer_elapsed(mt_timer[CTL_SLS_ID]) < TAPPING_TERM) {
+                tap_code(KC_SLSH);
+            } else {
+                mt_used = false;
             }
         }
         return false;   // this keypress was handled
