@@ -1,40 +1,34 @@
 #include QMK_KEYBOARD_H
 
-// todo: turn process_record_user into a better function with structs.
-// basically, make it faster
+// todo: consider making all mods one-shot
+// todo: media keys
 
 extern keymap_config_t keymap_config;
 
 // Layer definitions
 #define _COLEMAK 0
-#define _MODIFIERS 1
-#define _ALTERNATE 2
-#define _SYMBOL 3
+#define _SYMBOL 1
+#define _NAVIGATION 2
+#define _FUNCTION 3
 
 // Custom keycode definitions
 enum custom_keycodes {
     CTL_ESC = SAFE_RANGE,   // mod tap: left control / esc
-    LST_LPR,                // mod tap: left shift / left paren
-    RST_RPR,                // mod tap: right shift / right paren
-    SFT_ENT,                // mod tap: right shift / enter
-    GUI_COM,                // mod tap: right gui / comma
-    ALT_DOT,                // mod tap: right alt / dot
-    CTL_SLS,                // mod tap: right ctl / slash
-    RCAG,                   // mods: RCAG
-    L_LAYER,                // layer tap: left function layer / space
-    R_LAYER,                // layer tap: right function layer / enter
-    S_LAYER,                // layer: symbols
+    RCAG,                   // mods: RCtl, RAlt, RGui
 };
 
 // Shorthand keycode definitions
 #define VUP_MAC KC__VOLUP
-#define MUT_MAC KC__MUTE
 #define VDN_MAC KC__VOLDOWN
+#define MUT_MAC KC__MUTE
+#define LAY_SYM MO(_SYMBOL)
+#define LAY_NAV MO(_NAVIGATION)
+#define LAY_FUN MO(_FUNCTION)
 
 // The layout
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-    // default layer
+    // Default layer
     [_COLEMAK] = LAYOUT(
 // ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
     KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
@@ -43,52 +37,49 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
     CTL_ESC, KC_A,    KC_R,    KC_S,    KC_T,    KC_D,                       KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT,
 // ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-    LST_LPR, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    S_LAYER,  RCAG,    KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, RST_RPR,
+    LAY_SYM, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    LAY_FUN,  RCAG,    KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, LAY_NAV,
 // └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
-                                        KC_LGUI, L_LAYER, SFT_ENT,  KC_SPC,  R_LAYER, KC_LALT
+                                        KC_LALT, KC_LGUI, KC_LSFT,  KC_SPC,  KC_ENT,  KC_DEL
 //                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
     ),
 
-    // momentary on when any non-default layer (any except _COLEMAK) is on
-    [_MODIFIERS] = LAYOUT(
-// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
-    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
-// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
-// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
-// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, KC_LCTL, KC_LALT, KC_LGUI, KC_BSPC, _______, _______,  _______, _______, KC_DEL,  GUI_COM, ALT_DOT, CTL_SLS, _______,
-// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
-                                        _______, _______, _______,  _______, _______, _______
-//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
-    ),
-
-    // momentary on when either L_LAYER or R_LAYER is pressed
-    [_ALTERNATE] = LAYOUT(
-// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
-    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
-// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_INS,                     VUP_MAC, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, _______,
-// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_BRMU,                    MUT_MAC, KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, _______,
-// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, _______, _______, _______, _______, KC_BRMD, _______,  _______, VDN_MAC, _______, _______, _______, _______, _______,
-// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
-                                        _______, _______, _______,  _______, _______, _______
-//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
-    ),
-
-    // momentary on when both L_LAYER and R_LAYER are pressed, or when S_LAYER is pressed
     [_SYMBOL] = LAYOUT(
+// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, _______, _______, _______, _______,                    _______, _______, KC_LPRN, KC_RPRN, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, KC_UP,   _______, _______, _______,                    _______, KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______, _______,  _______, _______, _______, _______, _______, _______, _______,
+// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
+                                        _______, _______, _______,  _______, _______, _______
+//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
+    ),
+
+    [_NAVIGATION] = LAYOUT(
+// ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
+    _______, _______, _______, _______, _______, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, MUT_MAC, VDN_MAC, VUP_MAC, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, KC_INS,  KC_HOME, KC_PGUP, _______,                    _______, _______, _______, _______, _______, _______,
+// ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+    _______, _______, KC_DEL,  KC_END,  KC_PGDN, _______, _______,  _______, _______, _______, _______, _______, _______, _______,
+// └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
+                                        _______, _______, _______,  _______, _______, _______
+//                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
+    ),
+
+    [_FUNCTION] = LAYOUT(
 // ┌────────┬────────┬────────┬────────┬────────┬────────┐                  ┌────────┬────────┬────────┬────────┬────────┬────────┐
     KC_F12,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                      KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11, 
 // ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_F12,
+    _______, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                    KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_F12,
 // ├────────┼────────┼────────┼────────┼────────┼────────┤                  ├────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                    KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, _______,
+    _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
 // ├────────┼────────┼────────┼────────┼────────┼────────┼────────┐┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-    _______, _______, _______, _______, _______, KC_ENT,  _______,  _______, KC_SPC,  _______, _______, _______, _______, _______,
+    _______, KC_BRMD, KC_BRMU, _______, _______, KC_PWR,  _______,  _______, KC_MRWD, KC_MPLY, KC_MFFD, MUT_MAC, VDN_MAC, VUP_MAC,
 // └────────┴────────┴────────┴────────┼────────┼────────┼────────┘└────────┼────────┴────────┴────────┴────────┴────────┴────────┘
                                         _______, _______, _______,  _______, _______, _______
 //                                     └────────┴────────┴────────┘└────────┴────────┴────────┘
@@ -96,30 +87,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-//------------------------------------------------------------------------------
-// mod tap keys state
-//------------------------------------------------------------------------------
-#define CTL_ESC_ID 0
-#define LST_LPR_ID 1
-#define RST_RPR_ID 2
-#define SFT_ENT_ID 3
-#define L_LAYER_ID 4
-#define R_LAYER_ID 5
-#define GUI_COM_ID 6
-#define ALT_DOT_ID 7
-#define CTL_SLS_ID 8
-#define NUM_TAP_ID 9
-
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 
-    static bool llayer_pressed = false;
-    static bool rlayer_pressed = false;
-    static bool slayer_pressed = false;
-    static bool shift1_pressed = false;
-    static bool shift2_pressed = false;
     static bool mt_used = false;
-    static uint16_t mt_timer[NUM_TAP_ID] = {0};
-
+    static uint16_t mt_timer = 0;
 
     // was this function called to handle a pressed key?
     const bool pressed = record->event.pressed;
@@ -135,173 +106,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     }
 
     switch (keycode) {
-    case SFT_ENT:       // mod tap: right shift
-        shift1_pressed = pressed;
-        if (pressed) {
-            register_code(KC_RSFT);
-            mt_timer[SFT_ENT_ID] = timer_read();
-            mt_used = false;
-        } else {
-            if (! shift2_pressed) {
-                unregister_code(KC_RSFT);
-            }
-            if (!mt_used && timer_elapsed(mt_timer[SFT_ENT_ID]) < TAPPING_TERM) {
-                tap_code(KC_ENT);
-            } else {
-                mt_used = false;
-            }
-        }
-        return false;   // this keypress was handled
-    case L_LAYER:
-        llayer_pressed = pressed;
-        if (pressed) {
-            layer_on(_MODIFIERS);
-            layer_on(_ALTERNATE);
-            if (rlayer_pressed) {
-                layer_on(_SYMBOL);
-            }
-            mt_timer[L_LAYER_ID] = timer_read();
-            mt_used = false;
-        } else {
-            if (! mt_used && timer_elapsed(mt_timer[L_LAYER_ID]) < TAPPING_TERM) {
-                tap_code(KC_SPC);
-            } else {
-                mt_used = false;
-            }
-            if (! slayer_pressed) {
-                layer_off(_SYMBOL);
-                if (! rlayer_pressed) {
-                    layer_off(_ALTERNATE);
-                    layer_off(_MODIFIERS);
-                }
-            } else if (! rlayer_pressed) {
-                layer_off(_ALTERNATE);
-            }
-        }
-        return false;   // this keypress was handled
-    case R_LAYER:
-        rlayer_pressed = pressed;
-        if (pressed) {
-            layer_on(_MODIFIERS);
-            layer_on(_ALTERNATE);
-            if (llayer_pressed) {
-                layer_on(_SYMBOL);
-            }
-            mt_timer[R_LAYER_ID] = timer_read();
-            mt_used = false;
-        } else {
-            if (! mt_used && timer_elapsed(mt_timer[R_LAYER_ID]) < TAPPING_TERM) {
-                tap_code(KC_ENT);
-            } else {
-                mt_used = false;
-            }
-            if (! slayer_pressed) {
-                layer_off(_SYMBOL);
-                if (! llayer_pressed) {
-                    layer_off(_ALTERNATE);
-                    layer_off(_MODIFIERS);
-                }
-            } else if (! llayer_pressed) {
-                layer_off(_ALTERNATE);
-            }
-        }
-        return false;   // this keypress was handled
-    case LST_LPR: 
-        if (pressed) {
-            register_code(KC_LSFT);
-            mt_timer[LST_LPR_ID] = timer_read();
-            mt_used = false;
-        } else {
-            if (!mt_used && timer_elapsed(mt_timer[LST_LPR_ID]) < TAPPING_TERM) {
-                tap_code(KC_9);
-            } else {
-                mt_used = false;
-            }
-            unregister_code(KC_LSFT);
-        }
-        return false;   // this keypress was handled
     case CTL_ESC:       // mod tap: left control
         if (pressed) {
             register_code(KC_LCTL);
-            mt_timer[CTL_ESC_ID] = timer_read();
+            mt_timer = timer_read();
             mt_used = false;
         } else {
             unregister_code(KC_LCTL);
-            if (!mt_used && timer_elapsed(mt_timer[CTL_ESC_ID]) < TAPPING_TERM) {
+            if (!mt_used && timer_elapsed(mt_timer) < TAPPING_TERM) {
                 tap_code(KC_ESC);
-            } else {
-                mt_used = false;
-            }
-        }
-        return false;   // this keypress was handled
-    case RST_RPR: 
-        shift2_pressed = pressed;
-        if (pressed) {
-            register_code(KC_RSFT);
-            mt_timer[RST_RPR_ID] = timer_read();
-            mt_used = false;
-        } else {
-            if (!mt_used && timer_elapsed(mt_timer[RST_RPR_ID]) < TAPPING_TERM) {
-                tap_code(KC_0);
-            } else {
-                mt_used = false;
-            }
-            if (! shift1_pressed) {
-                unregister_code(KC_RSFT);
-            }
-        }
-        return false;   // this keypress was handled
-    case S_LAYER:
-        slayer_pressed = pressed;
-        if (pressed) {
-            layer_on(_MODIFIERS);
-            layer_on(_SYMBOL);
-        } else {
-            if (! (llayer_pressed || rlayer_pressed)) {
-                layer_off(_SYMBOL);
-                layer_off(_MODIFIERS);
-            } else if (! (llayer_pressed && rlayer_pressed)) {
-                layer_off(_SYMBOL);
-            }
-        }
-        return false;   // this keypress was handled
-    case GUI_COM:
-        if (pressed) {
-            register_code(KC_RGUI);
-            mt_timer[GUI_COM_ID] = timer_read();
-            mt_used = false;
-        } else {
-            unregister_code(KC_RGUI);
-            if (!mt_used && timer_elapsed(mt_timer[GUI_COM_ID]) < TAPPING_TERM) {
-                tap_code(KC_COMM);
-            } else {
-                mt_used = false;
-            }
-        }
-        return false;   // this keypress was handled
-    case ALT_DOT:
-        if (pressed) {
-            register_code(KC_RALT);
-            mt_timer[ALT_DOT_ID] = timer_read();
-            mt_used = false;
-        } else {
-            unregister_code(KC_RSFT);
-            if (!mt_used && timer_elapsed(mt_timer[ALT_DOT_ID]) < TAPPING_TERM) {
-                tap_code(KC_DOT);
-            } else {
-                mt_used = false;
-            }
-        }
-        return false;   // this keypress was handled
-    case CTL_SLS:
-        if (pressed) {
-            register_code(KC_RCTL);
-            mt_timer[CTL_SLS_ID] = timer_read();
-            mt_used = false;
-        } else {
-            unregister_code(KC_RSFT);
-            if (!mt_used && timer_elapsed(mt_timer[CTL_SLS_ID]) < TAPPING_TERM) {
-                tap_code(KC_SLSH);
             } else {
                 mt_used = false;
             }
