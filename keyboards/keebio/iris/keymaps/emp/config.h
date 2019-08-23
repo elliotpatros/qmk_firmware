@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-/* Use I2C or Serial, not both */
-
 /* disable debugging features */
 #ifndef NO_DEBUG
 #define NO_DEBUG
@@ -34,8 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif // #ifndef NO_PRINT
 
 /* debouncing time-limit for switch chatter. set to 0 if not needed */
-#define DEBOUNCING_DELAY 5
+#ifdef DEBOUNCING_DELAY
+#undef DEBOUNCING_DELAY
+#endif // def DEBOUNCING_DELAY
+#define DEBOUNCING_DELAY 10
 
+/* Use I2C or Serial, not both */
 #define USE_SERIAL
 // #define USE_I2C
 
@@ -48,16 +50,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define FORCE_NKRO
 
 /* disable tap dance and other tapping features */
-#define NO_ACTION_TAPPING
+// #define NO_ACTION_TAPPING
 
 /* disable one-shot modifiers */
-#define NO_ACTION_ONESHOT
+// #define NO_ACTION_ONESHOT
 
 /* disable old style macro handling */
-#define NO_ACTION_MACRO
+// #define NO_ACTION_MACRO
 
 /* disable calling of action_function() from the fn_actions array */
-#define NO_ACTION_FUNCTION
+// #define NO_ACTION_FUNCTION
 
 /* PERMISSIVE_HOLD
  * when off: tap-hold keys are both tapped when typed fast (within tapping term)
@@ -81,6 +83,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * the tapping term will turn it into a hold too
  */
 #define TAPPING_TERM 200
+
+/* TAPPING_TOGGLE x (count)
+ * If you hold the key down, layer is activated, and then is de-activated when
+ * you let go (like MO()). If you repeatedly tap it, the layer will be toggled
+ * on or off (like TG()). It needs 5 taps by default, but you can change this by
+ * defining TAPPING_TOGGLE to another number.
+ */
+#define TAPPING_TOGGLE 2
 
 /* RETRO_TAPPING 
  * tap anyway, even after TAPPING_TERM, if there was no other key interruption
